@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 from functools import partial
 from itertools import dropwhile, takewhile, islice, count, product, chain, starmap
@@ -142,7 +142,7 @@ def distinct_by_t(func):
             key = func(element)
             if key not in distinct_lookup:
                 distinct_lookup[key] = element
-        return distinct_lookup.values()
+        return list(distinct_lookup.values())
     return Transformation('distinct_by({0})'.format(name(func)), distinct_by, None)
 
 
@@ -287,7 +287,7 @@ def zip_t(zip_sequence):
     """
     return Transformation(
         'zip(<sequence>)',
-        lambda sequence: zip(sequence, zip_sequence),
+        lambda sequence: list(zip(sequence, zip_sequence)),
         None
     )
 
@@ -299,7 +299,7 @@ def zip_with_index_t(start):
     """
     return Transformation(
         'zip_with_index',
-        lambda sequence: zip(sequence, count(start=start)),
+        lambda sequence: list(zip(sequence, count(start=start))),
         None
     )
 
@@ -363,7 +363,7 @@ def inits_t(wrap):
     """
     return Transformation(
         'inits',
-        lambda sequence: [wrap(sequence[:i]) for i in reversed(range(len(sequence) + 1))],
+        lambda sequence: [wrap(sequence[:i]) for i in reversed(list(range(len(sequence) + 1)))],
         {ExecutionStrategies.PRE_COMPUTE}
     )
 
@@ -635,7 +635,7 @@ def partition_t(wrap, func):
     return Transformation(
         'partition({0})'.format(name(func)),
         lambda sequence: wrap(
-            (wrap(filter(func, sequence)), wrap(filter(lambda val: not func(val), sequence)))
+            (wrap(list(filter(func, sequence))), wrap([val for val in sequence if not func(val)]))
         ),
         None
     )
@@ -653,7 +653,7 @@ def inner_join_impl(other, sequence):
         seq_dict[element[0]] = element[1]
     seq_kv = seq_dict
     other_kv = dict(other)
-    keys = seq_kv.keys() if len(seq_kv) < len(other_kv) else other_kv.keys()
+    keys = list(seq_kv.keys()) if len(seq_kv) < len(other_kv) else list(other_kv.keys())
     result = {}
     for k in keys:
         if k in seq_kv and k in other_kv:
@@ -677,9 +677,9 @@ def join_impl(other, join_type, sequence):
     seq_kv = seq_dict
     other_kv = dict(other)
     if join_type == "left":
-        keys = seq_kv.keys()
+        keys = list(seq_kv.keys())
     elif join_type == "right":
-        keys = other_kv.keys()
+        keys = list(other_kv.keys())
     elif join_type == "outer":
         keys = set(list(seq_kv.keys()) + list(other_kv.keys()))
     else:

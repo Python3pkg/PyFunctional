@@ -2,7 +2,7 @@
 The pipeline module contains the transformations and actions API of PyFunctional
 """
 
-from __future__ import division, absolute_import
+
 
 from operator import mul
 import collections
@@ -118,7 +118,7 @@ class Sequence(object):
         """
         return self.size() != 0
 
-    def __nonzero__(self):
+    def __bool__(self):
         """
         Returns True if size is not zero.
 
@@ -1542,7 +1542,7 @@ class Sequence(object):
         """
         def _insert_item(item):
             if isinstance(item, dict):
-                cols = ', '.join(item.keys())
+                cols = ', '.join(list(item.keys()))
                 placeholders = ', '.join('?' * len(item))
                 sql = 'INSERT INTO {} ({}) VALUES ({})'.format(table_name, cols, placeholders)
                 conn.execute(sql, tuple(item.values()))

@@ -2,7 +2,7 @@
 Package for creating data pipelines, LINQ-style data analysis, and functional programming. Imports
 the primary entrypoint at streams.seq
 """
-from __future__ import absolute_import
+
 
 from functional.streams import seq, pseq
 

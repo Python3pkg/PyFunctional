@@ -1,5 +1,5 @@
 # pylint: skip-file
-from __future__ import absolute_import
+
 
 import sys
 import unittest
@@ -568,7 +568,7 @@ class TestPipeline(unittest.TestCase):
 
     def test_group_by_key(self):
         l = [('a', 1), ('a', 2), ('a', 3), ('b', -1), ('b', 1), ('c', 10), ('c', 5)]
-        e = {"a": [1, 2, 3], "b": [-1, 1], "c": [10, 5]}.items()
+        e = list({"a": [1, 2, 3], "b": [-1, 1], "c": [10, 5]}.items())
         result = self.seq(l).group_by_key()
         self.assertEqual(result.len(), len(e))
         for e0, e1 in zip(result, e):
@@ -578,9 +578,9 @@ class TestPipeline(unittest.TestCase):
     def test_grouped(self):
         l = self.seq([1, 2, 3, 4, 5, 6, 7, 8])
         expect = [[1, 2], [3, 4], [5, 6], [7, 8]]
-        self.assertIteratorEqual(map(list, l.grouped(2)), expect)
+        self.assertIteratorEqual(list(map(list, l.grouped(2))), expect)
         expect = [[1, 2, 3], [4, 5, 6], [7, 8]]
-        self.assertIteratorEqual(map(list, l.grouped(3)), expect)
+        self.assertIteratorEqual(list(map(list, l.grouped(3))), expect)
 
     def test_sliding(self):
         l = self.seq([1, 2, 3, 4, 5, 6, 7])
@@ -626,14 +626,14 @@ class TestPipeline(unittest.TestCase):
         self.assert_type(p2)
 
     def test_cartesian(self):
-        result = seq.range(3).cartesian(range(3)).list()
-        self.assertListEqual(result, list(product(range(3), range(3))))
+        result = seq.range(3).cartesian(list(range(3))).list()
+        self.assertListEqual(result, list(product(list(range(3)), list(range(3)))))
 
-        result = seq.range(3).cartesian(range(3), range(2)).list()
-        self.assertListEqual(result, list(product(range(3), range(3), range(2))))
+        result = seq.range(3).cartesian(list(range(3)), list(range(2))).list()
+        self.assertListEqual(result, list(product(list(range(3)), list(range(3)), list(range(2)))))
 
-        result = seq.range(3).cartesian(range(3), range(2), repeat=2).list()
-        self.assertListEqual(result, list(product(range(3), range(3), range(2), repeat=2)))
+        result = seq.range(3).cartesian(list(range(3)), list(range(2)), repeat=2).list()
+        self.assertListEqual(result, list(product(list(range(3)), list(range(3)), list(range(2)), repeat=2)))
 
     def test_product(self):
         l = [2, 2, 3]
@@ -751,7 +751,7 @@ class TestPipeline(unittest.TestCase):
 
     def test_reduce_by_key(self):
         l = [('a', 1), ('a', 2), ('a', 3), ('b', -1), ('b', 1), ('c', 10), ('c', 5)]
-        e = {"a": 6, "b": 0, "c": 15}.items()
+        e = list({"a": 6, "b": 0, "c": 15}.items())
         result = self.seq(l).reduce_by_key(lambda x, y: x + y)
         self.assertEqual(result.len(), len(e))
         for e0, e1 in zip(result, e):
@@ -760,7 +760,7 @@ class TestPipeline(unittest.TestCase):
 
     def test_count_by_key(self):
         l = [('a', 1), ('a', 2), ('a', 3), ('b', -1), ('b', 1), ('c', 10), ('c', 5), ('d', 1)]
-        e = {"a": 3, "b": 2, "c": 2, "d": 1}.items()
+        e = list({"a": 3, "b": 2, "c": 2, "d": 1}.items())
         result = self.seq(l).count_by_key()
         self.assertEqual(result.len(), len(e))
         for e0, e1 in zip(result, e):
@@ -769,7 +769,7 @@ class TestPipeline(unittest.TestCase):
 
     def test_count_by_value(self):
         l = ['a', 'a', 'a', 'b', 'b', 'c', 'd']
-        e = {'a': 3, 'b': 2, 'c': 1, 'd': 1}.items()
+        e = list({'a': 3, 'b': 2, 'c': 1, 'd': 1}.items())
         result = self.seq(l).count_by_value()
         self.assertEqual(result.len(), len(e))
         for e0, e1 in zip(result, e):

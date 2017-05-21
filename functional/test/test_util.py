@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 import unittest
 import sys
@@ -22,9 +22,9 @@ class TestUtil(unittest.TestCase):
     # Skipping tests on pypy because of https://github.com/uqfoundation/dill/issues/73
     @unittest.skipIf('__pypy__' in sys.builtin_module_names, 'Skip parallel tests on pypy')
     def test_lazy_parallelize(self):
-        self.assertListEqual(list(range(10)), reduce(add, lazy_parallelize(lambda x: x, range(10))))
+        self.assertListEqual(list(range(10)), reduce(add, lazy_parallelize(lambda x: x, list(range(10)))))
         self.assertListEqual(list(range(10)), list(
-            reduce(add, lazy_parallelize(lambda x: x, range(10), processes=10000))))
+            reduce(add, lazy_parallelize(lambda x: x, list(range(10)), processes=10000))))
 
         def f():
             yield 0
@@ -39,7 +39,7 @@ class TestUtil(unittest.TestCase):
     # Skipping tests on pypy because of https://github.com/uqfoundation/dill/issues/73
     @unittest.skipIf('__pypy__' in sys.builtin_module_names, 'Skip parallel tests on pypy')
     def test_pack_unpack(self):
-        packed = pack(map, [lambda x: x * 2, range(4)])
+        packed = pack(map, [lambda x: x * 2, list(range(4))])
         self.assertListEqual(unpack(packed), [0, 2, 4, 6])
 
     def test_compute_partition_size(self):
